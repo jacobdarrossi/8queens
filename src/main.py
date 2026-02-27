@@ -5,63 +5,35 @@ import time
 import sys
 import os
 
-# Ensure Python finds engine.py in the src/ folder
-sys.path.append(os.path.dirname(__file__))
-
+# Ajuste de path para encontrar o engine.py
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from engine import Population
 
-# Page Configuration - Set to 'wide' to help with horizontal space
 st.set_page_config(page_title="N-Queens Genetic Evolution", page_icon="👑", layout="wide")
 
-# Custom CSS for medium-sized crowns and zero-scroll layout
-# Custom CSS for UI Cleanliness, Mega Crowns, and Centering
+# CSS para esconder o menu e ajustar as rainhas (suas configurações favoritas)
 st.markdown("""
     <style>
-    /* Remove Streamlit Header (Deploy button and Menu) */
     header {visibility: hidden;}
     footer {visibility: hidden;}
     #MainMenu {visibility: hidden;}
-
-    .stTable {
-        display: flex;
-        justify-content: center;
-    }
-
-    /* Cell and Board Styling */
+    .stTable { display: flex; justify-content: center; }
     td {
-        padding: 0px !important;
-        margin: 0px !important;
-        height: 65px !important; 
-        width: 65px !important;  
-        vertical-align: middle !important;
-        text-align: center !important;
-        border: none !important;
-        overflow: hidden;
+        padding: 0px !important; height: 65px !important; width: 65px !important;
+        vertical-align: middle !important; text-align: center !important; border: none !important;
     }
-    table {
-        border-collapse: collapse !important;
-        margin-left: auto;
-        margin-right: auto;
-        table-layout: fixed;
-    }
-    .q-text {
-        font-size: 45px !important; 
-        line-height: 65px !important;
-        display: block;
-        width: 100%;
-        height: 100%;
-    }
+    .q-text { font-size: 45px !important; line-height: 65px !important; display: block; }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("👑 N-Queens: Genetic Evolution")
+st.title("👑 N-Queens: Evolution Lab")
 
-# --- Sidebar ---
-st.sidebar.header("Evolution Parameters")
-gen_count = st.sidebar.number_input("Generations", min_value=1, value=50, help="Cycles of evolution.")
-pop_size = st.sidebar.number_input("Population Size", min_value=2, value=20, help="Total boards per generation.")
-select_perc = st.sidebar.slider("Selection Tax (%)", 10, 90, 50, help="Percentage of survivors.")
-
+# --- Sidebar com Parâmetros ---
+st.sidebar.header("Evolution Control")
+gen_count = st.sidebar.number_input("Generations", min_value=1, value=100)
+pop_size = st.sidebar.number_input("Population Size", min_value=10, value=50)
+mutation_rate = st.sidebar.slider("Mutation Rate (%)", 0, 100, 10)  # Novo!
+selection_tax = st.sidebar.slider("Selection Tax (Survival %)", 10, 90, 50)
 
 def render_board(genes):
     n = len(genes)
@@ -80,40 +52,38 @@ def render_board(genes):
     return display_board.style.apply(style_chess, axis=None).to_html(escape=False)
 
 
-# --- Execution Logic ---
-if st.button("Start Evolution"):
-    pop = Population(pop_size, select_perc)
+# --- Lógica de Execução ---
+if st.button("Run Experiment"):
+    # Inicializa a população (garanta que seu engine.py aceite mutation_rate se possível)
+    pop = Population(pop_size, selection_tax)
 
-    progress_bar = st.progress(0)
-    status_text = st.empty()
-    board_plot = st.empty()
+    # Containers para atualização em tempo real
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        board_plot = st.empty()
+    with col2:
+        st.subheader("Fitness Progress")
+        chart_plot = st.empty()
 
-    metrics_col1, metrics_col2 = st.columns(2)
-    best_fitness_val = metrics_col1.empty()
-    current_gen_val = metrics_col2.empty()
+    fitness_history = []
 
     for g in range(gen_count):
         pop.select_best()
-        pop.breed_new_generation()
+        pop.breed_new_generation(mutation_rate)  # Se o seu engine suportar, passe mutation_rate aqui
 
         best_ind = pop.get_best()
+        current_fitness = int(best_ind.fitness / 2)
+        fitness_history.append(current_fitness)
 
-        progress = (g + 1) / gen_count
-        progress_bar.progress(progress)
-        status_text.text(f"Generation {g + 1}/{gen_count}")
-
-        # Display fitness (Pairs of attacking queens)
-        best_fitness_val.metric("Best Fitness (Collisions)", int(best_ind.fitness / 2))
-        current_gen_val.metric("Current Gen", g + 1)
-
+        # Atualiza o Tabuleiro
         board_plot.markdown(render_board(best_ind.genes), unsafe_allow_html=True)
 
-        time.sleep(0.05)
+        # Atualiza o Gráfico de Linha
+        chart_plot.line_chart(fitness_history)
 
-        if best_ind.fitness == 0:
+        if current_fitness == 0:
             st.balloons()
-            st.success("Perfect Solution Found!")
+            st.success(f"Perfect solution found at generation {g + 1}!")
             break
 
-    if pop.get_best().fitness > 0:
-        st.warning("Finished. Increase population or generations to find a perfect 0-collision solution.")
+        time.sleep(0.01)
