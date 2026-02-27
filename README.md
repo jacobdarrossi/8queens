@@ -28,16 +28,21 @@ The challenge is to place 8 queens on an 8x8 chessboard so that no two queens th
 ## 🚀 How to Run Locally
 
 1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/jacobdarrossi/8queens.git](https://github.com/jacobdarrossi/8queens.git)
-   ```
+    ```bash
+    git clone [https://github.com/jacobdarrossi/8queens.git](https://github.com/jacobdarrossi/8queens.git)
+    cd 8queens
+    ```
+2. **Set up a virtual environment:**
 
-2. **Install dependencies:**
-   ```bash
-   cd 8queens
-   pip install -r requirements.txt
-   ```
-3. **Run App:**
-   ```bash
-   streamlit run src/main.py
-   ```
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate  # Windows: .venv\Scripts\activate
+    ```
+3. **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+4. **Run App:**
+    ```bash
+    streamlit run src/main.py
+    ```
