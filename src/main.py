@@ -1,89 +1,62 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-import time
-import sys
-import os
 
-# Ajuste de path para encontrar o engine.py
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from engine import Population
+# Configuração da página
+st.set_page_config(page_title="Genetic Algorithms Lab", page_icon="🧬", layout="wide")
 
-st.set_page_config(page_title="N-Queens Genetic Evolution", page_icon="👑", layout="wide")
-
-# CSS para esconder o menu e ajustar as rainhas (suas configurações favoritas)
+# Estilização CSS para um visual mais limpo
 st.markdown("""
     <style>
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
-    #MainMenu {visibility: hidden;}
-    .stTable { display: flex; justify-content: center; }
-    td {
-        padding: 0px !important; height: 65px !important; width: 65px !important;
-        vertical-align: middle !important; text-align: center !important; border: none !important;
-    }
-    .q-text { font-size: 45px !important; line-height: 65px !important; display: block; }
+    .main-title { font-size: 45px; font-weight: bold; color: #4F8BF9; }
+    .subtitle { font-size: 25px; color: #666; margin-bottom: 20px; }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("👑 N-Queens: Evolution Lab")
+# Sidebar - Navegação
+st.sidebar.title("🧬 GA Portfolio")
+st.sidebar.markdown("---")
 
-# --- Sidebar com Parâmetros ---
-st.sidebar.header("Evolution Control")
-gen_count = st.sidebar.number_input("Generations", min_value=1, value=100)
-pop_size = st.sidebar.number_input("Population Size", min_value=10, value=50)
-mutation_rate = st.sidebar.slider("Mutation Rate (%)", 0, 100, 10)  # Novo!
-selection_tax = st.sidebar.slider("Selection Tax (Survival %)", 10, 90, 50)
+# Opção "Home" adicionada para não carregar um projeto de cara
+project = st.sidebar.selectbox(
+    "Select the Challenge:",
+    ["Welcome Page", "8-Queens Problem", "Knapsack Problem"]
+)
 
-def render_board(genes):
-    n = len(genes)
-    display_board = pd.DataFrame("", index=range(n), columns=range(n))
-    for row, col in enumerate(genes):
-        display_board.iloc[row, col] = '<span class="q-text">👑</span>'
+st.sidebar.markdown("---")
 
-    def style_chess(df):
-        styles = pd.DataFrame('', index=df.index, columns=df.columns)
-        for r in range(n):
-            for c in range(n):
-                color = '#f0d9b5' if (r + c) % 2 == 0 else '#b58863'
-                styles.iloc[r, c] = f'background-color: {color}; height: 65px; width: 65px;'
-        return styles
+# Lógica de Roteamento
+if project == "Welcome Page":
+    st.markdown('<p class="main-title">Genetic Algorithms Lab</p>', unsafe_allow_html=True)
+    st.markdown('<p class="subtitle">Bio-inspired computing for complex optimization</p>', unsafe_allow_html=True)
 
-    return display_board.style.apply(style_chess, axis=None).to_html(escape=False)
+    col1, col2 = st.columns([2, 1])
 
-
-# --- Lógica de Execução ---
-if st.button("Run Experiment"):
-    # Inicializa a população (garanta que seu engine.py aceite mutation_rate se possível)
-    pop = Population(pop_size, selection_tax)
-
-    # Containers para atualização em tempo real
-    col1, col2 = st.columns([1, 1])
     with col1:
-        board_plot = st.empty()
+        st.markdown("""
+        ### What are Genetic Algorithms?
+        Genetic Algorithms (GAs) are search heuristics inspired by Charles Darwin’s theory of natural evolution. 
+        They are used to find high-quality solutions to optimization and search problems by relying on biologically 
+        inspired operators such as:
+
+        * **Selection:** Choosing the fittest individuals to pass genes.
+        * **Crossover:** Combining DNA from parents to create offspring.
+        * **Mutation:** Introducing random changes to maintain diversity.
+
+        ### 🚀 How to use this Lab
+        Select a challenge in the **sidebar menu** to explore how GAs solve classic problems:
+        1.  **8-Queens:** A constraint satisfaction problem.
+        2.  **Knapsack:** A combinatorial optimization problem (Weight/Volume vs. Value).
+        """)
+
     with col2:
-        st.subheader("Fitness Progress")
-        chart_plot = st.empty()
+        st.info(
+            "💡 **Tip:** GAs are ideal for 'NP-Hard' problems where the search space is too vast for traditional methods.")
 
-    fitness_history = []
+elif project == "8-Queens Problem":
+    from queens.app import run_queens_app
 
-    for g in range(gen_count):
-        pop.select_best()
-        pop.breed_new_generation(mutation_rate)  # Se o seu engine suportar, passe mutation_rate aqui
+    run_queens_app()
 
-        best_ind = pop.get_best()
-        current_fitness = int(best_ind.fitness / 2)
-        fitness_history.append(current_fitness)
+elif project == "Knapsack Problem":
+    from knapsack.app import run_knapsack_app
 
-        # Atualiza o Tabuleiro
-        board_plot.markdown(render_board(best_ind.genes), unsafe_allow_html=True)
-
-        # Atualiza o Gráfico de Linha
-        chart_plot.line_chart(fitness_history)
-
-        if current_fitness == 0:
-            st.balloons()
-            st.success(f"Perfect solution found at generation {g + 1}!")
-            break
-
-        time.sleep(0.01)
+    run_knapsack_app()

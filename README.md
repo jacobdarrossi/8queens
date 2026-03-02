@@ -1,36 +1,53 @@
-# 👑 N-Queens Genetic Evolution
+# 🧬 Genetic Algorithms Applied Lab
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://jacobdarrossi-8queens.streamlit.app/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://jacobdarrossi-genetic-algotithms-lab.streamlit.app/)
 
-An interactive visualization of the **N-Queens Puzzle** solved through a **Genetic Algorithm**. This project is a modern Python reconstruction of an academic engine originally developed in Java.
+An interactive laboratory for **Evolutionary Computing**, focusing on solving complex optimization problems through **Genetic Algorithms (GA)**. This project is a modern Python re-engineering of academic engines originally developed in Java.
 
-🔗 **Live Demo:** [https://jacobdarrossi-8queens.streamlit.app/](https://jacobdarrossi-8queens.streamlit.app/)
+🔗 **Live Demo:** [https://jacobdarrossi-genetic-algotithms-lab.streamlit.app/](https://jacobdarrossi-genetic-algotithms-lab.streamlit.app/)
 
 ## 📜 The Story
-This repository is more than just an algorithm; it's a bridge between my past and present as a developer. 
-* **Original (2013/2014):** Developed in Java using the SWT (Standard Widget Toolkit).
-* **Modern Version (2026):** Re-engineered in Python, utilizing high-performance libraries like NumPy and Pandas for data handling, and Streamlit for a reactive web interface.
+This repository bridges a decade of development experience:
+* **Original (2013/2014):** Developed in Java using the SWT (Standard Widget Toolkit) during my early academic years.
+* **Modern Version (2026):** Re-imagined in Python 3.13+, utilizing **Streamlit** for reactive interfaces and **Pandas** for real-time data visualization of genetic convergence.
 
-## 🧠 How it Works
-The challenge is to place 8 queens on an 8x8 chessboard so that no two queens threaten each other. The Genetic Algorithm solves this by:
-1. **Population:** Creating a set of random boards.
-2. **Fitness:** Calculating the number of collisions (conflicting pairs) on each board.
-3. **Selection:** Choosing the best boards based on the Selection Tax.
-4. **Crossover:** Breeding the best individuals to create a new generation.
-5. **Evolution:** Repeating the process until a perfect solution (Fitness = 0) is found.
+## 🧠 Implemented Challenges
+
+### 1. 👑 N-Queens Puzzle
+The classic constraint satisfaction problem: place 8 queens on a chessboard so that no two queens threaten each other.
+* **Fitness:** Minimizing the number of conflicting pairs (collisions).
+* **Visualization:** Real-time rendering of the best board in each generation.
+
+### 2. 🎒 Knapsack Problem
+A combinatorial optimization challenge: maximize the total value of items within strict **Weight** and **Volume** limits.
+* **Fitness:** A multi-constraint function that penalizes capacity violations (125kg / 125L) while maximizing ROI based on a 25-product matrix.
+* **Metrics:** Live tracking of weight, volume, and currency accumulation.
+
+
 
 ## 🛠️ Tech Stack
 * **Language:** [Python 3.13+](https://www.python.org/)
 * **Interface:** [Streamlit](https://streamlit.io/)
 * **Data Processing:** [NumPy](https://numpy.org/) & [Pandas](https://pandas.pydata.org/)
-* **Engine:** Pure Python (Logic migrated and optimized from the original Java source)
+
+
+## 📂 Project Structure
+```text
+/src
+├── main.py              # Central entry point & Landing Page
+├── queens/
+│   ├── engine.py        # GA Logic for N-Queens
+│   └── app.py           # Queens UI Module
+└── knapsack/
+    ├── engine.py        # GA Logic for Knapsack
+    └── app.py           # Knapsack UI Module
 
 ## 🚀 How to Run Locally
 
 1. **Clone the repository:**
     ```bash
-    git clone [https://github.com/jacobdarrossi/8queens.git](https://github.com/jacobdarrossi/8queens.git)
-    cd 8queens
+    git clone [https://github.com/jacobdarrossi/genetic-algorithms-lab.git](https://github.com/jacobdarrossi/genetic-algorithms-lab.git)
+    cd genetic-algorithms-lab
     ```
 2. **Set up a virtual environment:**
 
